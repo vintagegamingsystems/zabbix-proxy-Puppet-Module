@@ -10,7 +10,7 @@ class zabbixproxy {
 	# Retrieves and imports Zabbix Public key
    	exec {
 		"getPublicKey":
-        		command         =>		"wget <public key location online> && rpm --import $zabbixRPMPubkey ",
+        	command         =>		"wget <public key location online> && rpm --import $zabbixRPMPubkey ",
                 cwd             =>		"/etc/pki/rpm-gpg/",
                 creates         =>		"$zabbixRPMPubkey",
                 path            =>		"/usr/bin/:/bin/"
@@ -25,7 +25,7 @@ class zabbixproxy {
 		"zabbix":
                 ensure          =>		present,
                 gid             =>		zabbix,
-                membership		=>		minimum,
+                membership	=>		minimum,
                 shell           =>		"/sbin/nologin",
                 home            =>		"/var/lib/zabbix",
                 require         =>		Group["zabbix"]
@@ -33,64 +33,64 @@ class zabbixproxy {
 
     file {
 		$zabbixRPMPubkey:
-            ensure				=>		present,
-            owner				=>		'root',
-            group				=>		'root',
-            mode        		=>		'0644',
-            require     		=>		Exec['getPublicKey'];
+            	ensure		=>		present,
+            	owner		=>		'root',
+            	group		=>		'root',
+            	mode        	=>		'0644',
+            	require     	=>		Exec['getPublicKey'];
 	
 	 	$zabbix_proxy_config_dir:
-            ensure				=>		directory,
-            owner				=>		'root',
-            group				=>		'root',
-            mode        		=>		'0755',
-        	require     		=>		Package["zabbix-proxy"];
+            	ensure		=>		directory,
+            	owner		=>		'root',
+            	group		=>		'root',
+            	mode        	=>		'0755',
+        	require     	=>		Package["zabbix-proxy"];
 	
 		$zabbix_proxy_conf:
-            owner				=>		'root',
-            group				=>		'root',
-            mode        		=>		'0640',
-            content     		=>		template("zabbixagent/zabbix_proxy_conf.erb"),
-            require     		=>		Package["zabbix-proxy"]
+            	owner		=>		'root',
+            	group		=>		'root',
+            	mode        	=>		'0640',
+            	content     	=>		template("zabbixagent/zabbix_proxy_conf.erb"),
+            	require     	=>		Package["zabbix-proxy"]
 		  
 		$zabbix_proxy_log_dir:
-			ensure				=>		directory,
-			owner				=>		'zabbix',
-			group				=>		'zabbix',
-			mode				=>		'0755',
-			require				=>		Package["zabbix-proxy"];
+		ensure		=>		directory,
+		owner		=>		'zabbix',
+		group		=>		'zabbix',
+		mode		=>		'0755',
+		require		=>		Package["zabbix-proxy"];
 		
 		$zabbix_proxy_pid_dir:
-            ensure 				=> 		directory,
-            owner 				=> 		'zabbix',
-            group 				=> 		'zabbix',
-            mode 				=> 		'0755',
-            require 			=> 		Package["zabbix-agent"];		
+            	ensure 		=> 		directory,
+            	owner 		=> 		'zabbix',
+            	group 		=> 		'zabbix',
+            	mode 		=> 		'0755',
+            	require 	=> 		Package["zabbix-agent"];		
 		}
 
 	package {
 		"zabbix-agent":
-            ensure				=>		installed,
-            require				=>		Exec["getPublicKey"]
+            	ensure		=>		installed,
+            	require		=>		Exec["getPublicKey"]
 		
 		"mysql":
-			ensure				=>		installed,
+		ensure		=>		installed,
 			} 
 		
  	service {
         "zabbix-proxy":
-            enable				=> 		true,
-            ensure 				=> 		running,
-            hasstatus 			=> 		true,
-            hasrestart 			=>		true,
-            require 			=> 		Package["zabbix-proxy", "mysql"]
+            	enable		=> 		true,
+            	ensure 		=> 		running,
+            	hasstatus 	=> 		true,
+            	hasrestart 	=>		true,
+            	require 	=> 		Package["zabbix-proxy", "mysql"]
     	
     	"mysql":
-    		enable				=>		true,
-    		ensure				=>		running,
-    		hasstatus			=>		true,
-    		hasrestart			=>		true,
-    		require				=>		Package["mysql"]
+    		enable		=>		true,
+    		ensure		=>		running,
+    		hasstatus	=>		true,
+    		hasrestart	=>		true,
+    		require		=>		Package["mysql"]
     }
 }
 	
